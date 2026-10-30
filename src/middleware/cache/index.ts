@@ -228,7 +228,7 @@ export const cache = (options: {
   const maxQueryBodySize = options.maxQueryBodySize ?? defaultMaxQueryBodySize
 
   const addHeader = (c: Context, responseVary: string[]) => {
-    if (cacheControlDirectives) {
+    if (cacheControlDirectives && !c.res.headers.has('Set-Cookie')) {
       const existingDirectives =
         c.res.headers
           .get('Cache-Control')

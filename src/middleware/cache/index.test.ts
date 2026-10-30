@@ -511,13 +511,14 @@ describe('Cache Skipping Logic', () => {
 
   it('Should NOT cache response if Set-Cookie header is present', async () => {
     const app = new Hono()
-    app.use('*', cache({ cacheName: 'skip-test', wait: true }))
+    app.use('*', cache({ cacheName: 'skip-test', wait: true, cacheControl: 'max-age=10' }))
     app.get('/', (c) => {
       c.header('Set-Cookie', 'session=secret')
       return c.text('response')
     })
 
-    await app.request('/')
+    const res = await app.request('/')
+    expect(res.headers.get('cache-control')).toBeNull()
     expect(putSpy).not.toHaveBeenCalled()
   })
 
